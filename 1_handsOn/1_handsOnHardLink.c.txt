@@ -1,0 +1,11 @@
+#include <unistd.h>
+
+int main() {
+    const char *target = "target_file";
+    const char *link_name = "hard_link";
+    
+    link(target, link_name);
+    return 0;
+}
+
+
