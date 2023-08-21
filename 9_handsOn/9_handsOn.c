@@ -8,6 +8,7 @@
 #include <time.h>
 
 int main() {
+    printf("HandsOn 9 Write a program to print the following information about a given file.\na. inode\nb. number of hard links\nc. uid\nd. gid\ne. size\nf. block size\ng. number of blocks\nh. time of last access\ni. time of last modification\nj. time of last change.\n");
     char fileName[100];
     struct stat fileStats;
     struct passwd *pwd;

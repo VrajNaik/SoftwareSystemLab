@@ -6,6 +6,7 @@
 #define BUFFER_SIZE 1
 
 int main(int argc, char *argv[]) {
+    printf("HandsOn 7 Write a program to copy file1 into file2 ($cp file1 file2).\n");
     if (argc != 3) {
         return 1;
     }

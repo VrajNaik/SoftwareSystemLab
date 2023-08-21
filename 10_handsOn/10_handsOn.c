@@ -5,7 +5,7 @@
 
 int main() {
     int fd; 
-    fd = open("test_file.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    fd = open("temp.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1) {
         perror("Error opening file");
         return 1;

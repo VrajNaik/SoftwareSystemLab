@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
+    printf("HandsOn 8 Write a program to open a file in read only mode, read line by line and display each line as it is read. Close the file when end of file is reached.\n");
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
         return 1;
