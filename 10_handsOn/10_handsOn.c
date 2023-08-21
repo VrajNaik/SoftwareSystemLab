@@ -10,7 +10,7 @@ int main() {
         perror("Error opening file");
         return 1;
     }
-    const char data1[] = "abcdefghij";
+    const char data1[] = "MT2023050-";
     int bytesWritten = write(fd, data1, sizeof(data1) - 1);
     if (bytesWritten == -1) {
         perror("Error writing data");
@@ -24,7 +24,7 @@ int main() {
         close(fd);
         return 1;
     }
-    const char data2[] = "ABCDEFGHIJ";
+    const char data2[] = " VrajJNaik";
     bytesWritten = write(fd, data2, sizeof(data2) - 1);
     if (bytesWritten == -1) {
         perror("Error writing data");
@@ -33,5 +33,6 @@ int main() {
     }
     printf("lseek return value: %ld\n", newPosition);
     close(fd);
+    system("od -c temp.txt");
     return 0;
 }
