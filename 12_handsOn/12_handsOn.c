@@ -17,11 +17,14 @@ int main(int argc, char *argv[]) {
 
     if (strcmp(mode, "r") == 0) {
         mode_flags = O_RDONLY;
-    } else if (strcmp(mode, "w") == 0) {
+    } 
+    else if (strcmp(mode, "w") == 0) {
         mode_flags = O_WRONLY;
-    } else if (strcmp(mode, "rw") == 0) {
+    } 
+    else if (strcmp(mode, "rw") == 0) {
         mode_flags = O_RDWR;
-    } else {
+    } 
+    else {
         fprintf(stderr, "Invalid mode argument. Use 'r', 'w', or 'rw'.\n");
         return 1;
     }

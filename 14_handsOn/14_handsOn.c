@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     struct stat file_info;
 
     if (stat(filename, &file_info) == -1) {
-        perror("Error while getting file information");
+        perror("Oops !!!!!Error");
         return 1;
     }
 
