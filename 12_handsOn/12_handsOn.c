@@ -30,18 +30,18 @@ int main(int argc, char *argv[]) {
     }
 
     int fd = open(filename, mode_flags);
-    printf("%d", fd);
+    int status = fcntl(fd,F_GETFL);
 
     if (fd == -1) {
         perror("Error opening file");
         return 1;
     }
-
-    if (mode_flags == O_RDONLY) {
+    int flag = (O_ACCMODE & status);
+    if (flag == 0) {
         printf("%s is open in READ-ONLY mode.\n", filename);
-    } else if (mode_flags == O_WRONLY) {
+    } else if (flag == 1) {
         printf("%s is open in WRITE-ONLY mode.\n", filename);
-    } else if (mode_flags == O_RDWR) {
+    } else if (flag == 2) {
         printf("%s is open in READ-WRITE mode.\n", filename);
     } else {
         printf("%s is open with an unknown mode.\n", filename);

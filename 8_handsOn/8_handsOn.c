@@ -16,27 +16,27 @@ int main(int argc, char *argv[]) {
         perror("Error opening file");
         exit(1);
     }
-
-    char buffer[1024];
-    ssize_t bytesRead;
-
+    char buffer;
+    int bytesRead;
     char line[1024];
     int lineIndex = 0;
 
-    while ((bytesRead = read(fileDescriptor, buffer, sizeof(buffer))) > 0) {
-        for (int i = 0; i < bytesRead; i++) {
-            if (buffer[i] == '\n') {
-                write(STDOUT_FILENO, line, lineIndex);
-                write(STDOUT_FILENO, "\n", 1);
-                lineIndex = 0; 
-            } else {
-                line[lineIndex] = buffer[i];
-                lineIndex++;
-            }
+    while ((bytesRead = read(fileDescriptor, &buffer, 1)) > 0) {
+        if (buffer == '\n') {
+           
+            write(STDOUT_FILENO, line, lineIndex);
+            write(STDOUT_FILENO, "\n", 1);
+            lineIndex = 0;
+            sleep(5);
+        } 
+        else {
+            line[lineIndex] = buffer;
+            lineIndex++;
         }
-        sleep(5);
     }
+
     close(fileDescriptor);
 
     return 0;
 }
+
