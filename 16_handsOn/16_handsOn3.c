@@ -17,7 +17,7 @@ int main() {
 
     printf("Enter the filename: ");
     scanf("%255s", filename);
-    getchar(); // Consume the newline character
+    getchar();
 
     fd = open(filename, O_RDWR | O_CREAT, 0666);
 
@@ -32,7 +32,7 @@ int main() {
     signal(SIGALRM, alarm_handler); 
     
     while (1) {
-        printf("Yeh Raha Menu aapke computer screen par:\n");
+        printf("Yeh Raha Menu aapke computer screen par:\nTUDUM\n");
         printf("1. Acquire Read Lock\n");
         printf("2. Acquire Write Lock\n");
         printf("3. Quit\n");

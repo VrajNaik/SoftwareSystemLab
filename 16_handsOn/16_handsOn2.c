@@ -3,7 +3,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <termios.h>
+
 
 // Function to acquire a write lock on a file
 int acquireWriteLock(const char *filename) {
@@ -14,7 +14,6 @@ int acquireWriteLock(const char *filename) {
     }
 
     struct flock lock;
-    memset(&lock, 0, sizeof(lock));
     lock.l_type = F_WRLCK;  // Write lock
     lock.l_whence = SEEK_SET;
     lock.l_start = 0;
@@ -32,7 +31,7 @@ int acquireWriteLock(const char *filename) {
     char ch;
     do {
         ch = getchar();
-    } while (ch != '\n');
+    } while (ch != 'r');
 
     lock.l_type = F_UNLCK;  // Unlock
     if (fcntl(fd, F_SETLK, &lock) == -1) {
@@ -73,7 +72,7 @@ int acquireReadLock(const char *filename) {
     char ch;
     do {
         ch = getchar();
-    } while (ch != '\n');
+    } while (ch != 'r');
 
     lock.l_type = F_UNLCK;  // Unlock
     if (fcntl(fd, F_SETLK, &lock) == -1) {
