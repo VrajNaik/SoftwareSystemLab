@@ -80,7 +80,7 @@ int main() {
 
                     // Read and print the record
                     char buffer[100];
-                    lseek(fd, recordNumber * sizeof(char) * 100, SEEK_SET);
+                    lseek(fd, (recordNumber - 1) * sizeof(char) * 100, SEEK_SET);
                     read(fd, buffer, sizeof(char) * 100);
                     printf("Record %d: %s\n", recordNumber, buffer);
 
@@ -105,7 +105,7 @@ int main() {
 
                     // Read the record before modification
                     char buffer[100];
-                    lseek(fd, recordNumber * sizeof(char) * 100, SEEK_SET);
+                    lseek(fd, (recordNumber - 1) * sizeof(char) * 100, SEEK_SET);
                     read(fd, buffer, sizeof(char) * 100);
                     printf("Current content of Record %d: %s\n", recordNumber, buffer);
 
@@ -113,7 +113,7 @@ int main() {
                     char newContent[100];
                     printf("Enter new content for Record %d: ", recordNumber);
                     scanf(" %[^\n]", newContent);
-                    lseek(fd, recordNumber * sizeof(char) * 100, SEEK_SET);
+                    lseek(fd, (recordNumber - 1) * sizeof(char) * 100, SEEK_SET);
                     write(fd, newContent, sizeof(char) * 100);
 
                     printf("Record %d updated.\n", recordNumber);
