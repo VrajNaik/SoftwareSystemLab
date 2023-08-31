@@ -1,0 +1,12 @@
+1. Create the following types of a files using (i) shell command (ii) system call
+a. soft link (symlink system call)
+b. hard link (link system call)
+c. FIFO (mkfifo Library Function or mknod system call)
+2. Write a simple program to execute in an infinite loop at the background. Go to /proc directory and
+identify all the process related information in the corresponding proc directory.
+3. Write a program to create a file and print the file descriptor value. Use creat ( ) system call
+4. Write a program to open an existing file with read write mode. Try O_EXCL flag also.
+5. Write a program to create five new files with infinite loop. Execute the program in the background
+and check the file descriptor table at /proc/pid/fd.
+6. Write a program to take input from STDIN and display on STDOUT. Use only read/write system calls
+7. Write a program to copy file1 into file2 ($cp file1 file2).

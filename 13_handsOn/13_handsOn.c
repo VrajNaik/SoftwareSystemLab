@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 int main() {
+    printf("Write a program to wait for a STDIN for 10 seconds using select. Write a proper print statement to verify whether the data is available within 10 seconds or not (check in $man 2 select).\n\n");
     fd_set fds;
     FD_ZERO(&fds);
     FD_SET(STDIN_FILENO, &fds);

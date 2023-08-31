@@ -1,0 +1,18 @@
+total 48
+-rw-rw-r-- 1 vraj-naik vraj-naik    0 Jul 17 16:57 1
+-rw-rw-r-- 1 vraj-naik vraj-naik    0 Jul 17 16:57 2
+-rw-rw-r-- 1 vraj-naik vraj-naik    0 Jul 17 16:57 3
+drwxr-xr-x 2 vraj-naik vraj-naik 4096 Jul 14 02:20 Desktop
+drwxr-xr-x 2 vraj-naik vraj-naik 4096 Jul 14 02:20 Documents
+drwxr-xr-x 2 vraj-naik vraj-naik 4096 Jul 14 02:20 Downloads
+-rw-rw-r-- 1 vraj-naik vraj-naik    0 Jul 19 17:15 file_list
+-rw-rw-r-- 1 vraj-naik vraj-naik    0 Jul 14 11:14 f.txt
+-rwxrwxrwx 1 vraj-naik vraj-naik   57 Jul 14 10:54 handson1.sh
+-rwxrwxrwx 1 vraj-naik vraj-naik  158 Jul 17 16:50 handson2.sh
+-rwxrwxrwx 1 vraj-naik vraj-naik  175 Jul 17 17:02 handson3.sh
+drwxr-xr-x 2 vraj-naik vraj-naik 4096 Jul 14 02:20 Music
+drwxr-xr-x 2 vraj-naik vraj-naik 4096 Jul 14 02:20 Pictures
+drwxr-xr-x 2 vraj-naik vraj-naik 4096 Jul 14 02:20 Public
+drwx------ 4 vraj-naik vraj-naik 4096 Jul 17 17:15 snap
+drwxr-xr-x 2 vraj-naik vraj-naik 4096 Jul 14 02:20 Templates
+drwxr-xr-x 2 vraj-naik vraj-naik 4096 Jul 14 02:20 Videos

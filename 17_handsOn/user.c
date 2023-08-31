@@ -136,10 +136,12 @@ int main() {
 
             case 4:
                 printf("User logged out.\n");
+                system("./catalog");
                 break;
 
             default:
                 printf("Invalid choice.\n");
+                continue;
         }
     } while (userChoice != 4);
 

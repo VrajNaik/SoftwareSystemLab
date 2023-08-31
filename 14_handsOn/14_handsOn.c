@@ -5,8 +5,9 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-    printf("HandsOn 14 Write a program to find the type of a file.\na. Input should be taken from command line.\nb. program should be able to identify any type of a file.\n");
+    printf("HandsOn 14 Write a program to find the type of a file.\na. Input should be taken from command line.\nb. program should be able to identify any type of a file.\n\n\n");
     if (argc != 2) {
+        printf("Hey I think you forgot to write filename along with command...Please Provide Filename...\n\n");
         fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
         return 1;
     }

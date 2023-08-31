@@ -7,6 +7,7 @@
 int main() {
     int fd;
     char filename[256];
+    printf("Write a program to perform mandatory locking.\na. Implement write lock\nb. Implement read lock.\n\n");
 
     printf("Enter the filename: ");
     scanf("%255s", filename);
@@ -38,18 +39,17 @@ int main() {
                 lock.l_start = 0;
                 lock.l_len = 0;
 
-                if (fcntl(fd, F_SETLK, &lock) == 0) {
-                    printf("Read lock acquired.\n");
-                    printf("Press Enter to release the lock...\n");
-                    sleep(10);
-                    printf("Ab release bhi kardo Please!!!!.\n");
-                    getchar();
-                    lock.l_type = F_UNLCK;
-                    fcntl(fd, F_SETLK, &lock);
-                    printf("Read lock released.\n");
-                } else {
-                    perror("Areeey !!! Unable to acquire read lock");
+                while (fcntl(fd, F_SETLK, &lock) == -1) {
+                    perror("Areeey !!! Unable to acquire read lock. Waiting...");
+                    sleep(1); // Wait for 1 second before retrying
                 }
+
+                printf("Read lock acquired.\n");
+                printf("Press Enter to release the lock...\n");
+                getchar();
+                lock.l_type = F_UNLCK;
+                fcntl(fd, F_SETLK, &lock);
+                printf("Read lock released.\n");
                 break;
             case '2':
                 lock.l_type = F_WRLCK;
@@ -57,18 +57,17 @@ int main() {
                 lock.l_start = 0;
                 lock.l_len = 0;
 
-                if (fcntl(fd, F_SETLK, &lock) == 0) {
-                    printf("Write lock acquired.\n");
-                    printf("Press Enter to release the lock...\n");
-                    sleep(10);
-                    printf("Ab release bhi kardo Please!!!!.\n");
-                    getchar();
-                    lock.l_type = F_UNLCK;
-                    fcntl(fd, F_SETLK, &lock);
-                    printf("Write lock released.\n");
-                } else {
-                    perror("Areeey !!! Unable to acquire write lock");
+                while (fcntl(fd, F_SETLK, &lock) == -1) {
+                    perror("Areeey !!! Unable to acquire write lock. Waiting...");
+                    sleep(1); // Wait for 1 second before retrying
                 }
+
+                printf("Write lock acquired.\n");
+                printf("Press Enter to release the lock...\n");
+                getchar();
+                lock.l_type = F_UNLCK;
+                fcntl(fd, F_SETLK, &lock);
+                printf("Write lock released.\n");
                 break;
             case '3':
                 close(fd);

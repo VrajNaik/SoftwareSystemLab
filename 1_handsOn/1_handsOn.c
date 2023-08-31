@@ -2,21 +2,22 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 int main() {
-    int softLink = symlink("target_file", "softLink3");
+    int softLink = symlink("target_file", "softLink050");
     if(softLink < 0){
-      perror("Failed !!! Try Again MAN!!!!!!!");
+      perror("Failure in creating Softlink....Failed !!! Try Again MAN!!!!!!!");
       return 1;
     }
-    int hardLink = link("target_file", "hardLink3");
+    int hardLink = link("target_file", "hardLink3050");
     if(hardLink < 0){
-      perror("Failed !!! Try Again MAN!!!!!!!");
+      perror("Failure in creating Hardlink....Failed !!! Try Again MAN!!!!!!!");
       return 1;
     }
-    int FIFO = mknod("FIFO1", S_IFIFO, 0);
+    int FIFO = mknod("FIFO050", S_IFIFO, 0);
     if(FIFO < 0){
-      perror("Failed !!! Try Again MAN!!!!!!!");
+      perror("Failure in creating PIPE....Failed !!! Try Again MAN!!!!!!!");
     }
     return 0;
 }
