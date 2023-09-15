@@ -10,7 +10,7 @@ int main() {
       perror("Failure in creating Softlink....Failed !!! Try Again MAN!!!!!!!");
       return 1;
     }
-    int hardLink = link("target_file", "hardLink3050");
+    int hardLink = link("target_file", "hardLink111");
     if(hardLink < 0){
       perror("Failure in creating Hardlink....Failed !!! Try Again MAN!!!!!!!");
       return 1;

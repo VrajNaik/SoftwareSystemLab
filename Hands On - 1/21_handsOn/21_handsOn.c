@@ -17,7 +17,7 @@ int main() {
     } 
     else if (p == 0) {
         printf("In child process: Hey....!\npid: %d \nParents Process ID (ppid): %d\n", getpid(), getppid());
-        // Add child process logic here
+       
         exit(0); // Exit the child process
     } 
     else {

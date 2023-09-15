@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
 
     // Check for the correct number of command-line arguments
     if (argc != 3) {
-        printf("Please Provide Proper command line arguments!!!\n");
+        printf("Please Provide Proper command line arguments!!!\n2");
         fprintf(stderr, "Usage: %s <filename> <mode>\n", argv[0]);
         fprintf(stderr, "  <mode> should be 'r' for read, 'w' for write, or 'rw' for read-write\n");
         return 1;

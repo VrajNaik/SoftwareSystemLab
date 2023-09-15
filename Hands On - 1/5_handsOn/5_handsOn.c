@@ -31,9 +31,9 @@ int main() {
     }
 
     // Close all the file descriptors
-    for (int i = 0; i < numFiles; ++i) {
+    /*for (int i = 0; i < numFiles; ++i) {
         close(file_descriptors[i]);
-    }
+    }*/
 
     // Enter an infinite loop to keep the program running
     while (1) {

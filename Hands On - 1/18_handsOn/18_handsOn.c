@@ -9,7 +9,7 @@ void acquireWriteLock(int fd, int recordNumber) {
     struct flock lock;
     lock.l_type = F_WRLCK;
     lock.l_whence = SEEK_SET;
-    lock.l_start = recordNumber * sizeof(char) * 100; // Assuming each record is 100 bytes
+    lock.l_start = (recordNumber - 1) * sizeof(char) * 100; // Assuming each record is 100 bytes
     lock.l_len = sizeof(char) * 100;
 
     if (fcntl(fd, F_SETLKW, &lock) == -1) {
@@ -70,7 +70,7 @@ int main() {
                     struct flock lock;
                     lock.l_type = F_RDLCK;
                     lock.l_whence = SEEK_SET;
-                    lock.l_start = recordNumber * sizeof(char) * 100;
+                    lock.l_start = (recordNumber-1) * sizeof(char) * 100;
                     lock.l_len = sizeof(char) * 100;
 
                     if (fcntl(fd, F_SETLKW, &lock) == -1) {

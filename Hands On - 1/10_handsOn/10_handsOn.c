@@ -56,7 +56,7 @@ int main() {
 
     // Use the 'od' command to view the file in octal dump format
     char odCommand[512]; // Increase buffer size
-    snprintf(odCommand, sizeof(odCommand), "od -c %s", fileName);
+    snprintf(odCommand, sizeof(odCommand), "od -a %s", fileName);
     system(odCommand);
 
     return 0; // Exit successfully
