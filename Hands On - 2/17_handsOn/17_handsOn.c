@@ -12,120 +12,180 @@ Description : Write a program to execute ls -l | wc.
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <sys/wait.h>
+
+void executeWithDup() {
+    int pipefd[2];
+    pipe(pipefd);
+
+    pid_t ls_pid = fork();
+
+    if (ls_pid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (ls_pid == 0) {
+        // Child process (ls)
+        close(pipefd[0]);  // Close the read end of the pipe
+        dup2(pipefd[1], STDOUT_FILENO);  // Redirect stdout to the pipe
+        execlp("ls", "ls", "-l", NULL);
+        perror("exec ls");
+        exit(EXIT_FAILURE);
+    } else {
+        // Parent process
+        wait(NULL);
+        close(pipefd[1]);  // Close the write end of the pipe
+
+        pid_t wc_pid = fork();
+
+        if (wc_pid == -1) {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        }
+
+        if (wc_pid == 0) {
+            // Child process (wc)
+            dup2(pipefd[0], STDIN_FILENO);  // Redirect stdin to the ls output pipe
+            execlp("wc", "wc", NULL);
+            perror("exec wc");
+            exit(EXIT_FAILURE);
+        } else {
+            // Parent process
+            wait(NULL);
+        }
+    }
+}
+
+void executeWithDup2() {
+    int pipefd[2];
+    pipe(pipefd);
+
+    pid_t ls_pid = fork();
+
+    if (ls_pid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (ls_pid == 0) {
+        // Child process (ls)
+        close(pipefd[0]);  // Close the read end of the pipe
+        dup2(pipefd[1], STDOUT_FILENO);  // Redirect stdout to the pipe
+        execlp("ls", "ls", "-l", NULL);
+        perror("exec ls");
+        exit(EXIT_FAILURE);
+    } else {
+        // Parent process
+        wait(NULL);
+        close(pipefd[1]);  // Close the write end of the pipe
+
+        pid_t wc_pid = fork();
+
+        if (wc_pid == -1) {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        }
+
+        if (wc_pid == 0) {
+            // Child process (wc)
+            dup2(pipefd[0], STDIN_FILENO);  // Redirect stdin to the ls output pipe
+            execlp("wc", "wc", NULL);
+            perror("exec wc");
+            exit(EXIT_FAILURE);
+        } else {
+            // Parent process
+            wait(NULL);
+        }
+    }
+}
+
+void executeWithFcntl() {
+    int pipefd[2];
+    pipe(pipefd);
+
+    pid_t ls_pid = fork();
+
+    if (ls_pid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (ls_pid == 0) {
+        // Child process (ls)
+        close(pipefd[0]);  // Close the read end of the pipe
+        dup2(pipefd[1], STDOUT_FILENO);  // Redirect stdout to the pipe
+        execlp("ls", "ls", "-l", NULL);
+        perror("exec ls");
+        exit(EXIT_FAILURE);
+    } else {
+        // Parent process
+        wait(NULL);
+        close(pipefd[1]);  // Close the write end of the pipe
+
+        pid_t wc_pid = fork();
+
+        if (wc_pid == -1) {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        }
+
+        if (wc_pid == 0) {
+            // Child process (wc)
+            int saved_stdin = dup(STDIN_FILENO);
+            dup2(pipefd[0], STDIN_FILENO);  // Redirect stdin to the ls output pipe
+            execlp("wc", "wc", NULL);
+            perror("exec wc");
+            dup2(saved_stdin, STDIN_FILENO);  // Restore stdin
+            exit(EXIT_FAILURE);
+        } else {
+            // Parent process
+            wait(NULL);
+        }
+    }
+}
 
 int main() {
     int choice;
 
-    while (1) {
-        printf("\nCatalog Menu:\n");
-        printf("1. Using dup\n");
-        printf("2. Using dup2\n");
-        printf("3. Using fcntl\n");
-        printf("4. Using all\n");
-        printf("5. Exit\n");
+    do {
+        printf("\nSelect an option:\n");
+        printf("1. Execute ls -l | wc with dup\n");
+        printf("2. Execute ls -l | wc with dup2\n");
+        printf("3. Execute ls -l | wc with fcntl\n");
+        printf("4. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
         switch (choice) {
-            case 1: {
-                int original_fd = STDOUT_FILENO;
-                int duplicate_fd = dup(original_fd);
-
-                if (duplicate_fd == -1) {
-                    perror("dup");
-                    exit(EXIT_FAILURE);
-                }
-
-                printf("Using dup: This is a catalog entry.\n");
-
-                // Close the duplicated file descriptor
-                close(duplicate_fd);
+            case 1:
+                printf("\n-------- ls -l --------\n");
+                printf("Lines   Words   Numbers\n");
+                executeWithDup();
+                printf("\n-------- wc --------\n");
                 break;
-            }
-
-            case 2: {
-                int original_fd = STDOUT_FILENO;
-                int new_fd = open("/dev/null", O_WRONLY);
-
-                if (new_fd == -1) {
-                    perror("open");
-                    exit(EXIT_FAILURE);
-                }
-
-                if (dup2(new_fd, original_fd) == -1) {
-                    perror("dup2");
-                    exit(EXIT_FAILURE);
-                }
-
-                printf("Using dup2: This is a catalog entry.\n");
-
-                // Close the new file descriptor
-                close(new_fd);
+            case 2:
+                printf("\n-------- ls -l --------\n");
+                printf("Lines   Words   Numbers\n");
+                executeWithDup2();
+                printf("\n-------- wc --------\n");
                 break;
-            }
-
-            case 3: {
-                int original_fd = STDOUT_FILENO;
-                int new_fd = fcntl(original_fd, F_DUPFD, 0);
-
-                if (new_fd == -1) {
-                    perror("fcntl");
-                    exit(EXIT_FAILURE);
-                }
-
-                printf("Using fcntl: This is a catalog entry.\n");
-
-                // Close the new file descriptor
-                close(new_fd);
+            case 3:
+                printf("\n-------- ls -l --------\n");
+                printf("Lines   Words   Numbers\n");
+                executeWithFcntl();
+                printf("\n-------- wc --------\n");
+                
                 break;
-            }
-
-            case 4: {
-                int original_fd = STDOUT_FILENO;
-                int duplicate_fd1 = dup(original_fd);
-
-                if (duplicate_fd1 == -1) {
-                    perror("dup");
-                    exit(EXIT_FAILURE);
-                }
-
-                int duplicate_fd2 = fcntl(original_fd, F_DUPFD, 0);
-
-                if (duplicate_fd2 == -1) {
-                    perror("fcntl");
-                    exit(EXIT_FAILURE);
-                }
-
-                int new_fd = open("/dev/null", O_WRONLY);
-
-                if (new_fd == -1) {
-                    perror("open");
-                    exit(EXIT_FAILURE);
-                }
-
-                if (dup2(new_fd, original_fd) == -1) {
-                    perror("dup2");
-                    exit(EXIT_FAILURE);
-                }
-
-                printf("Using all: This is a catalog entry.\n");
-
-                // Close the duplicated file descriptors and the new file descriptor
-                close(duplicate_fd1);
-                close(duplicate_fd2);
-                close(new_fd);
+            case 4:
+                printf("Exiting program.\n");
                 break;
-            }
-
-            case 5:
-                printf("Exiting the catalog program.\n");
-                exit(EXIT_SUCCESS);
-
             default:
-                printf("Invalid choice. Please try again.\n");
+                printf("Invalid option. Please try again.\n");
         }
-    }
+    } while (choice != 4);
 
     return 0;
 }
+
+
