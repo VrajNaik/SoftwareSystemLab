@@ -1,11 +1,3 @@
-/*
-============================================================================
-Name : 26.c
-Author : Vraj Jatin Naik
-Description : Write a program to send messages to the message queue. Check $ipcs -q
-Date : 5th Oct, 2023.
-============================================================================
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,14 +15,14 @@ int main() {
     int msgqid;
     struct msgbuf message;
 
-    // Generate a unique key for the message queue (use the same key as when creating it)
+    // Generate the same key as when creating the message queue
     if ((key = ftok(".", 'A')) == -1) {
         perror("ftok");
         exit(EXIT_FAILURE);
     }
 
-    // Try to get the message queue ID, create it if it doesn't exist
-    if ((msgqid = msgget(key, IPC_CREAT | 0666)) == -1) {
+    // Get the message queue ID
+    if ((msgqid = msgget(key, 0666)) == -1) {
         perror("msgget");
         exit(EXIT_FAILURE);
     }

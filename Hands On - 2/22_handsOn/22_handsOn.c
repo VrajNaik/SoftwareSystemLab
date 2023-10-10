@@ -1,79 +1,83 @@
-/*
-============================================================================
-Name : 22.c
-Author : Vraj Jatin Naik
-Description : Write a program to wait for data to be written into FIFO within 10 seconds, use select
-              system call with FIFO.
-Date : 2nd Oct, 2023.
-============================================================================
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/select.h>
 #include <string.h>
-#include <errno.h>
-
-#define FIFO_PATH "myfifo1"
 
 int main() {
-    // Create the FIFO if it doesn't exist
-    if (mkfifo(FIFO_PATH, 0666) == -1 && errno != EEXIST) {
-        perror("mkfifo");
-        exit(EXIT_FAILURE);
-    }
+    fd_set rfds;
+    struct timeval tv;
+    char buff[256];
+    int fd;
+    char fifo_name[256];
 
-    // Open the FIFO for reading (non-blocking)
-    int fd = open(FIFO_PATH, O_RDONLY | O_NONBLOCK);
-    if (fd == -1) {
-        perror("open");
-        exit(EXIT_FAILURE);
-    }
+    // Ask the user for the FIFO name
+    printf("Enter the name of the FIFO: ");
+    fgets(fifo_name, sizeof(fifo_name), stdin);
+    fifo_name[strcspn(fifo_name, "\n")] = '\0'; // Remove the newline character
 
-    // Initialize the file descriptor set for select
-    fd_set read_fds;
-    FD_ZERO(&read_fds);
-    FD_SET(fd, &read_fds);
-
-    // Set a timeout of 10 seconds
-    struct timeval timeout;
-    timeout.tv_sec = 10;
-    timeout.tv_usec = 0;
-
-    printf("Waiting for data in FIFO within 10 seconds...\n");
-
-    // Wait for data or timeout using select
-    int result = select(fd + 1, &read_fds, NULL, NULL, &timeout);
-
-    if (result == -1) {
-        perror("select");
-        exit(EXIT_FAILURE);
-    } else if (result == 0) {
-        printf("Timeout: No data written to FIFO within 10 seconds.\n");
-    } else {
-        printf("Data is available in FIFO.\n");
-
-        // Read and process the data
-        char buffer[1024];
-        ssize_t bytesRead = read(fd, buffer, sizeof(buffer));
-        if (bytesRead == -1) {
-            perror("read");
-        } else {
-            buffer[bytesRead] = '\0';
-            printf("Received data: %s\n", buffer);
+    // Check if the FIFO already exists, and create it if not
+    if (access(fifo_name, F_OK) == -1) {
+        if (mkfifo(fifo_name, 0666) == -1) {
+            perror("mkfifo");
+            exit(1);
         }
     }
 
-    // Close and remove the FIFO
+    // Open the FIFO for reading
+    fd = open(fifo_name, O_RDONLY);
+    if (fd == -1) {
+        perror("open");
+        exit(1);
+    }
+
+    FD_ZERO(&rfds);
+    FD_SET(fd, &rfds);
+
+    // Set the timeout to 10 seconds
+    tv.tv_sec = 10;
+    tv.tv_usec = 0;
+
+    // Initialize a timer
+    struct timeval start_time, current_time;
+    gettimeofday(&start_time, NULL);
+
+    // Display a "waiting" message
+    printf("Waiting for data from the FIFO...\n");
+
+    while (1) {
+        // Calculate elapsed time
+        gettimeofday(&current_time, NULL);
+        double elapsed_time = difftime(current_time.tv_sec, start_time.tv_sec);
+
+        // Use select to wait for data or timeout
+        int result = select(fd + 1, &rfds, NULL, NULL, &tv);
+
+        if (result == -1) {
+            perror("select");
+            exit(1);
+        } else if (result > 0) {
+            printf("Data is available now\n");
+            ssize_t bytesRead = read(fd, buff, sizeof(buff));
+            if (bytesRead == -1) {
+                perror("read");
+                exit(1);
+            }
+            buff[bytesRead] = '\0';  // Null-terminate the received data
+            printf("Data from FIFO: %s\n", buff);
+            break; // Exit the loop when data is available
+        } else if (elapsed_time >= 10) {
+            printf("No data is available for reading within 10 seconds\n");
+            break; // Exit the loop after 10 seconds
+        }
+    }
+
+    // Close the FIFO and do other tasks
     close(fd);
-    unlink(FIFO_PATH);
 
     return 0;
 }
-
-
 
