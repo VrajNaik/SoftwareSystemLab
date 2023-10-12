@@ -1,15 +1,16 @@
-/*#define MAX_NAME_LEN 100
+#define MAX_NAME_LEN 100
 #define MAX_PASSWORD_LEN 50
 #define MAX_ENROLLED_COURSES 20 
 
-typedef struct {
+struct Student{
     int student_id;
-    char name[MAX_NAME_LEN];
+    char username[MAX_NAME_LEN];
     char password[MAX_PASSWORD_LEN];
     int enrolled_courses[MAX_ENROLLED_COURSES]; // Store course IDs
     int num_enrolled_courses; // Keep track of the number of enrolled courses
-} Student;*/
+};
 
+/*
 struct Student getStudent(int ID){
         int i = ID;
         struct Student currUser;
@@ -66,3 +67,4 @@ bool checkStudent(struct Student currUser){
         close(fd);
         return result;
 }
+*/

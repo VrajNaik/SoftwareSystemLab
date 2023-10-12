@@ -61,6 +61,7 @@ void getPassword(char *password, int maxLength) {
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 }
 
+/*
 // Function to hash the password using SHA-256
 
 void hashPassword(const char *inputPassword, unsigned char *outputHash) {
@@ -73,8 +74,68 @@ void hashPassword(const char *inputPassword, unsigned char *outputHash) {
     EVP_DigestFinal(mdctx, outputHash, NULL);
     EVP_MD_CTX_free(mdctx);
 }
+*/
 
+int main(){
+	int choice = 0;
+	struct Admin newAdmin;
+	newAdmin.admin_id = getNewAdmin();
+	int fd = open("/home/vraj-naik/sslab/SS_Project/VidyaSynergy/data/admin.data", O_RDWR | O_CREAT | O_APPEND, 0744);
+        if (fd == -1) {
+              perror("Error opening the file");
+              return 1;
+        }
+	printf("Please enter the name of the admin: ");
+	scanf(" %[^\n]",newAdmin.username);
+	char tempPassword[11]; // Temporary variable for password input
+        do {
+              printf("Please Enter the password (max 10 characters) with at least one uppercase, one lowercase, and one special character: ");
+              getPassword(tempPassword, sizeof(tempPassword));
 
+              if (isValidPassword(tempPassword)) {
+                  newAdmin.password = tempPassword;
+                  break;
+              } 
+              else {
+                  printf("Invalid password. Password must meet the criteria.\n");
+              }
+        } while (1);
+	
+	printf("Hey!!! Congratulations....!!! Your ID is : %d\n", newAdmin.admin_id);
+        write(fd, &newAdmin, sizeof(struct Admin));
+        
+    
+	printf("Do you want to continue(0/1)? ");
+	
+	scanf("%d", &choice);
+	while(choice) {
+		newAdmin.admin_id = getNewAdmin();
+		printf("Please enter the name of the admin: ");
+		scanf(" %[^\n]",newAdmin.username);
+		char tempPassword[11]; // Temporary variable for password input
+                do {
+                        printf("Please Enter the password (max 10 characters) with at least one uppercase, one lowercase, and one special character: ");
+                        getPassword(tempPassword, sizeof(tempPassword));
+
+                        if (isValidPassword(tempPassword)) {
+                                newAdmin.password = tempPassword;
+                                break;
+                        } 
+                        else {
+                                printf("Invalid password. Password must meet the criteria.\n");
+                        }
+                } while (1);
+		printf("Hey!!! Your ID is : %d\n", newAdmin.admin_id);
+                write(fd, &newAdmin, sizeof(struct Admin));
+
+                printf("Do you want to continue (1 for Yes, 0 for No)? ");
+                scanf("%d", &choice);
+	}
+	close(fd);
+
+	return 0;
+}
+/*
 int main() {
     int choice;
     struct Admin newAdmin;
@@ -103,7 +164,7 @@ int main() {
     } while (1);
 
     // Hash the password
-    hashPassword(tempPassword, newAdmin.password);
+    //hashPassword(tempPassword, newAdmin.password);
 
     printf("Hey!!! Congratulations....!!! Your ID is : %d\n", newAdmin.admin_id);
     write(fd, &newAdmin, sizeof(struct Admin));
@@ -141,4 +202,4 @@ int main() {
     close(fd);
     return 0;
 }
-
+*/
