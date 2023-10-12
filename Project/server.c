@@ -11,7 +11,8 @@
 
 #include "./functions/server-constants.h"
 #include "./functions/admin.h"
-#include "./functions/customer.h"
+#include "./functions/student.h"
+#include "./functions/faculty.h"
 
 void connection_handler(int connectionFileDescriptor)
 {
@@ -42,11 +43,11 @@ void connection_handler(int connectionFileDescriptor)
                 break;
             case 2:
                 // Faculty
-                Faculty_operation_handler(connectionFileDescriptor);
+                faculty_operation_handler(connectionFileDescriptor);
                 break;
             case 3:
                 // Student
-                Student_operation_handler(connectionFileDescriptor);
+                student_operation_handler(connectionFileDescriptor);
                 break;
             default:
                 // Exit

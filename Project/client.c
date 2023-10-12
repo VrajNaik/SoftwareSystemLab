@@ -71,7 +71,7 @@ void main()
     }
 
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8081);
+    serverAddress.sin_port = htons(8080);
     serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 
     connectStatus = connect(socketFileDescriptor, (struct sockaddr *)&serverAddress, sizeof(serverAddress));
