@@ -34,6 +34,7 @@ bool login_handler(int role, int connFD, struct Student *ptrToCustomerID, struct
     char tempBuffer[1000];
     struct Student customer;
     struct Faculty customer2;
+    bool status;
 
     int ID;
 
@@ -70,8 +71,10 @@ bool login_handler(int role, int connFD, struct Student *ptrToCustomerID, struct
 
     if (role == 0)
     {
-        if (strcmp(readBuffer, ADMIN_LOGIN_ID) == 0)
+        if (strcmp(readBuffer, ADMIN_LOGIN_ID) == 0) {
             userFound = true;
+            status = true;
+        }
     }
     else if (role == 1)
     {
@@ -108,9 +111,10 @@ bool login_handler(int role, int connFD, struct Student *ptrToCustomerID, struct
             lock.l_type = F_UNLCK;
             fcntl(customerFileFD, F_SETLK, &lock);
 
-            if (strcmp(customer.login, readBuffer) == 0)
+            if (strcmp(customer.login, readBuffer) == 0) {
                 userFound = true;
-
+                status = customer.status;
+            }
             close(customerFileFD);
         }
         else
@@ -155,6 +159,7 @@ bool login_handler(int role, int connFD, struct Student *ptrToCustomerID, struct
 
             if (strcmp(customer2.login, readBuffer) == 0) {
                 userFound = true;
+                status = true;
             }
 
             close(customerFileFD);
@@ -165,7 +170,7 @@ bool login_handler(int role, int connFD, struct Student *ptrToCustomerID, struct
         }
     }
 
-    if (userFound)
+    if (userFound && status)
     {
         bzero(writeBuffer, sizeof(writeBuffer));
         writeBytes = write(connFD, PASSWORD, strlen(PASSWORD));
@@ -423,5 +428,6 @@ bool get_faculty_details(int connFD, int customerID)
     readBytes = read(connFD, readBuffer, sizeof(readBuffer)); // Dummy read
     return true;
 }
+
 
 #endif

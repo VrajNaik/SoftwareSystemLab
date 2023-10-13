@@ -11,10 +11,12 @@ int semIdentifier;
 // Function Prototypes =================================
 
 bool faculty_operation_handler(int connFD);
+bool change_password1(int connFD);
+bool lock_critical_section1(struct sembuf *semOp);
+bool unlock_critical_section1(struct sembuf *sem_op);
 /*bool deposit(int connFD);
 bool withdraw(int connFD);
 bool get_balance(int connFD);
-bool change_password(int connFD);
 bool lock_critical_section(struct sembuf *semOp);
 bool unlock_critical_section(struct sembuf *sem_op);
 void write_transaction_to_array(int *transactionArray, int ID);
@@ -94,13 +96,8 @@ bool faculty_operation_handler(int connFD)
                 //withdraw(connFD);
                 break;
             case 4:
+                change_password1(connFD);
                 //get_balance(connFD);
-                break;
-            case 5:
-                //get_transaction_details(connFD, loggedInCustomer2.account);
-                break;
-            case 6:
-                //change_password(connFD);
                 break;
             default:
                 writeBytes = write(connFD, FACULTY_LOGOUT, strlen(FACULTY_LOGOUT));
@@ -112,6 +109,172 @@ bool faculty_operation_handler(int connFD)
     {
         // CUSTOMER LOGIN FAILED
         return false;
+    }
+    return true;
+}
+
+bool change_password1(int connFD)
+{
+    ssize_t readBytes, writeBytes;
+    char readBuffer[1000], writeBuffer[1000], hashedPassword[1000];
+
+    char newPassword[1000];
+
+    // Lock the critical section
+    struct sembuf semOp = {0, -1, SEM_UNDO};
+    int semopStatus = semop(semIdentifier, &semOp, 1);
+    if (semopStatus == -1)
+    {
+        perror("Error while locking critical section");
+        return false;
+    }
+
+    writeBytes = write(connFD, PASSWORD_CHANGE_OLD_PASS, strlen(PASSWORD_CHANGE_OLD_PASS));
+    if (writeBytes == -1)
+    {
+        perror("Error writing PASSWORD_CHANGE_OLD_PASS message to client!");
+        unlock_critical_section1(&semOp);
+        return false;
+    }
+
+    bzero(readBuffer, sizeof(readBuffer));
+    readBytes = read(connFD, readBuffer, sizeof(readBuffer));
+    if (readBytes == -1)
+    {
+        perror("Error reading old password response from client");
+        unlock_critical_section1(&semOp);
+        return false;
+    }
+
+    if (strcmp(crypt(readBuffer, SALT_BAE), loggedInCustomer2.password) == 0)
+    {
+        // Password matches with old password
+        writeBytes = write(connFD, PASSWORD_CHANGE_NEW_PASS, strlen(PASSWORD_CHANGE_NEW_PASS));
+        if (writeBytes == -1)
+        {
+            perror("Error writing PASSWORD_CHANGE_NEW_PASS message to client!");
+            unlock_critical_section1(&semOp);
+            return false;
+        }
+        bzero(readBuffer, sizeof(readBuffer));
+        readBytes = read(connFD, readBuffer, sizeof(readBuffer));
+        if (readBytes == -1)
+        {
+            perror("Error reading new password response from client");
+            unlock_critical_section1(&semOp);
+            return false;
+        }
+
+        strcpy(newPassword, crypt(readBuffer, SALT_BAE));
+
+        writeBytes = write(connFD, PASSWORD_CHANGE_NEW_PASS_RE, strlen(PASSWORD_CHANGE_NEW_PASS_RE));
+        if (writeBytes == -1)
+        {
+            perror("Error writing PASSWORD_CHANGE_NEW_PASS_RE message to client!");
+            unlock_critical_section1(&semOp);
+            return false;
+        }
+        bzero(readBuffer, sizeof(readBuffer));
+        readBytes = read(connFD, readBuffer, sizeof(readBuffer));
+        if (readBytes == -1)
+        {
+            perror("Error reading new password reenter response from client");
+            unlock_critical_section1(&semOp);
+            return false;
+        }
+
+        if (strcmp(crypt(readBuffer, SALT_BAE), newPassword) == 0)
+        {
+            // New & reentered passwords match
+
+            strcpy(loggedInCustomer2.password, newPassword);
+
+            int facultyFileDescriptor = open(FACULTY_FILE, O_WRONLY);
+            if (facultyFileDescriptor == -1)
+            {
+                perror("Error opening faculty file!");
+                unlock_critical_section1(&semOp);
+                return false;
+            }
+
+            off_t offset = lseek(facultyFileDescriptor, loggedInCustomer2.id * sizeof(struct Faculty), SEEK_SET);
+            if (offset == -1)
+            {
+                perror("Error seeking to the faculty record!");
+                unlock_critical_section1(&semOp);
+                return false;
+            }
+
+            struct flock lock = {F_WRLCK, SEEK_SET, offset, sizeof(struct Faculty), getpid()};
+            int lockingStatus = fcntl(facultyFileDescriptor, F_SETLKW, &lock);
+            if (lockingStatus == -1)
+            {
+                perror("Error obtaining write lock on faculty record!");
+                unlock_critical_section1(&semOp);
+                return false;
+            }
+
+            writeBytes = write(facultyFileDescriptor, &loggedInCustomer2, sizeof(struct Faculty));
+            if (writeBytes == -1)
+            {
+                perror("Error storing updated faculty password into faculty record!");
+                unlock_critical_section1(&semOp);
+                return false;
+            }
+
+            lock.l_type = F_UNLCK;
+            lockingStatus = fcntl(facultyFileDescriptor, F_SETLK, &lock);
+
+            close(facultyFileDescriptor);
+
+            writeBytes = write(connFD, PASSWORD_CHANGE_SUCCESS, strlen(PASSWORD_CHANGE_SUCCESS));
+            readBytes = read(connFD, readBuffer, sizeof(readBuffer)); // Dummy read
+
+            unlock_critical_section1(&semOp);
+
+            return true;
+        }
+        else
+        {
+            // New & reentered passwords don't match
+            writeBytes = write(connFD, PASSWORD_CHANGE_NEW_PASS_INVALID, strlen(PASSWORD_CHANGE_NEW_PASS_INVALID));
+            readBytes = read(connFD, readBuffer, sizeof(readBuffer)); // Dummy read
+        }
+    }
+    else
+    {
+        // Password doesn't match with old password
+        writeBytes = write(connFD, PASSWORD_CHANGE_OLD_PASS_INVALID, strlen(PASSWORD_CHANGE_OLD_PASS_INVALID));
+        readBytes = read(connFD, readBuffer, sizeof(readBuffer)); // Dummy read
+    }
+
+    unlock_critical_section1(&semOp);
+
+    return false;
+}
+
+bool lock_critical_section1(struct sembuf *semOp)
+{
+    semOp->sem_flg = SEM_UNDO;
+    semOp->sem_op = -1;
+    semOp->sem_num = 0;
+    int semopStatus = semop(semIdentifier, semOp, 1);
+    if (semopStatus == -1)
+    {
+        perror("Error while locking critical section");
+        return false;
+    }
+    return true;
+}
+
+bool unlock_critical_section1(struct sembuf *semOp)
+{
+    semOp->sem_op = 1;
+    int semopStatus = semop(semIdentifier, semOp, 1);
+    if (semopStatus == -1)
+    {
+        perror("Error while operating on semaphore!");
+        _exit(1);
     }
     return true;
 }
