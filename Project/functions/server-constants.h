@@ -24,7 +24,10 @@
 #define INVALID_MENU_CHOICE "It seems you've made an invalid menu choice\nYou'll now be redirected to the main menu!^"
 
 #define CUSTOMER_ID_DOESNT_EXIT "No customer could be found for the given ID"
+#define STUDENT_ID_DOESNT_EXIST "No student could be found for the given ID"
+#define STUDENT_ID_DOESNT_EXIT "No student could be found for the given ID"
 #define CUSTOMER_LOGIN_ID_DOESNT_EXIT "No customer could be found for the given login ID$"
+#define CUSTOMER_LOGIN_ID_DOESNT_EXIST "No customer could be found for the given login ID$"
 
 #define FACULTY_ID_DOESNT_EXIT "No faculty could be found for the given login ID$"
 
@@ -101,4 +104,23 @@
 
 #define STUDENT_FILE "./records/student.data"
 #define FACULTY_FILE "./records/faculty.data"
+
+#define ADMIN_MOD_STUDENT_ID "Enter student-id to modify:"
+#define ADMIN_MOD_STUDENT_MENU "Which information would you like to modify?\n1.Name 2.Age 3.Email 4.Address \nPress any other key to cancel"
+
+#define ADMIN_MOD_STUDENT_NEW_NAME "What's the updated value for name?"
+#define ADMIN_MOD_STUDENT_NEW_AGE "What's the updated value for age?"
+#define ADMIN_MOD_STUDENT_NEW_EMAIL "What's the updated value for email?"
+#define ADMIN_MOD_STUDENT_NEW_GENDER "What's the updated value for gender?"
+#define ADMIN_MOD_STUDENT_NEW_ADDRESS "What's the updated value for address?"
+#define ADMIN_MOD_STUDENT_SUCCESS "The required modification was successfully made!\nYou'll now be redirected to the main menu ^"
+
+#define ADMIN_MOD_FACULTY_ID "Enter faculty-id to modify:"
+#define ADMIN_MOD_FACULTY_MENU "Which information would you like to modify?\n1.Name 2.Department 3.Designation 4.Email 5.Address \nPress any other key to cancel"
+#define ADMIN_MOD_FACULTY_NEW_NAME "What's the updated value for name?"
+#define ADMIN_MOD_FACULTY_NEW_DEPARTMENT "What's the updated value for department?"
+#define ADMIN_MOD_FACULTY_NEW_DESIGNATION "What's the updated value for designation?"
+#define ADMIN_MOD_FACULTY_NEW_EMAIL "What's the updated value for email?"
+#define ADMIN_MOD_FACULTY_NEW_ADDRESS "What's the updated value for address?"
+#define ADMIN_MOD_FACULTY_SUCCESS "The required modification was successfully made!\nYou'll now be redirected to the main menu ^"
 #endif

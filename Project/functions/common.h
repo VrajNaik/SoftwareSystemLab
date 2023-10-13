@@ -162,7 +162,6 @@ bool login_handler(int role, int connFD, struct Student *ptrToCustomerID, struct
         else
         {
             writeBytes = write(connFD, FACULTY_ID_DOESNT_EXIT, strlen(FACULTY_ID_DOESNT_EXIT));
-            printf("Hello");
         }
     }
 

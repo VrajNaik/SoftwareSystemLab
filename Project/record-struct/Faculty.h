@@ -10,6 +10,8 @@ struct Faculty
     int num_course;
     char department[50];
     char designation[50];
+     char address[160];
+    char email[80];
     // Login Credentials
     char login[30]; // Format : name-id (name will the first word in the structure member `name`)
     char password[30];
