@@ -5,7 +5,7 @@ struct Course
 {
     int id; // 0, 1, 2 ....
     char name[25];
-    char facultyloginid[10];
+    char facultyloginid[30];
     char department [30];
     int no_of_seats;
     int credits;

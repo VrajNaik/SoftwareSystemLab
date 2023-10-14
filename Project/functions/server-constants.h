@@ -104,6 +104,7 @@
 
 #define STUDENT_FILE "./records/student.data"
 #define FACULTY_FILE "./records/faculty.data"
+#define COURSE_FILE "./records/course.data"
 
 #define ADMIN_MOD_STUDENT_ID "Enter student-id to modify:"
 #define ADMIN_MOD_STUDENT_MENU "Which information would you like to modify?\n1.Name \n 2.Age \n 3.Gander \n 4.Email \nPress any other key to cancel"
@@ -142,4 +143,11 @@
 #define PASSWORD_CHANGE_NEW_PASS_RE "Reenter the new password"
 #define PASSWORD_CHANGE_NEW_PASS_INVALID "The new password and the reentered passwords don't seem to pass!^"
 #define PASSWORD_CHANGE_SUCCESS "Password successfully changed!^"
+
+// ADD COURSE
+#define ADD_COURSE_NAME "Enter course name:"
+#define ADD_COURSE_DEPARTMENT "Enter department:"
+#define ADD_COURSE_SEATS "Enter no of seats:"
+#define ADD_COURSE_CREDITS "Credits:"
+#define ADD_COURSE_SUCCESS "^ Course created successfully!\n The courseid is "
 #endif

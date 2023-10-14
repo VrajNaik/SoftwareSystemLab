@@ -4,6 +4,11 @@
 // Semaphores are necessary joint account due the design choice I've made
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <ctype.h>
+#include <time.h>
+#include "server-constants.h"
+#include "../record-struct/Course.h"
+
 
 struct Faculty loggedInCustomer2;
 int semIdentifier;
@@ -14,14 +19,7 @@ bool faculty_operation_handler(int connFD);
 bool change_password1(int connFD);
 bool lock_critical_section1(struct sembuf *semOp);
 bool unlock_critical_section1(struct sembuf *sem_op);
-/*bool deposit(int connFD);
-bool withdraw(int connFD);
-bool get_balance(int connFD);
-bool lock_critical_section(struct sembuf *semOp);
-bool unlock_critical_section(struct sembuf *sem_op);
-void write_transaction_to_array(int *transactionArray, int ID);
-int write_transaction_to_file(int accountNumber, long int oldBalance, long int newBalance, bool operation);
-*/
+int add_course(int connFD);
 // =====================================================
 
 // Function Definition =================================
@@ -90,7 +88,7 @@ bool faculty_operation_handler(int connFD)
                 get_faculty_details(connFD, loggedInCustomer2.id);
                 break;
             case 2:
-                //deposit(connFD);
+                add_course(connFD);
                 break;
             case 3:
                 //withdraw(connFD);
@@ -251,6 +249,203 @@ bool change_password1(int connFD)
     unlock_critical_section1(&semOp);
 
     return false;
+}
+
+int add_course(int connFD){
+    ssize_t readBytes, writeBytes;
+    char readBuffer[1000], writeBuffer[1000];
+    struct Course newCourse;
+    struct Course prevCourse;
+
+
+    int courseFileDescriptor = open(COURSE_FILE, O_RDONLY);
+    if (courseFileDescriptor == -1 && errno == ENOENT)
+    {
+        // Course file was never created
+        newCourse.id =1;
+    }
+    else if (courseFileDescriptor == -1)
+    {
+        perror("Error while opening course file");
+        return 0;
+    }
+    else
+    {
+        // getting the id of last record
+        int offset = lseek(courseFileDescriptor, -sizeof(struct Course), SEEK_END);
+        if (offset == -1)
+        {
+            perror("Error seeking to last Course record!");
+            return 0;
+        }
+
+        struct flock lock = {F_RDLCK, SEEK_SET, offset, sizeof(struct Course), getpid()};
+        int lockingStatus = fcntl(courseFileDescriptor, F_SETLKW, &lock);
+        if (lockingStatus == -1)
+        {
+            perror("Error obtaining read lock on Course record!");
+            return 0;
+        }
+
+        readBytes = read(courseFileDescriptor, &prevCourse, sizeof(struct Course));
+        if (readBytes == -1)
+        {
+            perror("Error while reading Course record from file!");
+            return 0;
+        }
+
+        lock.l_type = F_UNLCK;
+        fcntl(courseFileDescriptor, F_SETLK, &lock);
+
+        close(courseFileDescriptor);
+
+        newCourse.id = prevCourse.id+1;
+    }
+
+    // course name 
+    writeBytes = write(connFD, ADD_COURSE_NAME,strlen(ADD_COURSE_NAME));
+    if (writeBytes == -1)
+    {
+        perror("Error writing ADD_COURSE_NAME message to client!");
+        return 0;
+    }
+
+    bzero(readBuffer, sizeof(readBuffer));
+    readBytes = read(connFD, &readBuffer, sizeof(readBuffer));
+    if (readBytes == -1)
+    {
+        perror("Error reading course name from client!");
+        return 0;
+    }
+
+    //validation for course name
+    for(int i = 0;readBuffer[i]!='\0';i++) {
+        if(!isalpha(readBuffer[i]) && !isspace(readBuffer[i])) {
+            write(connFD,"Invalid  course name ^",21);
+            readBytes= read(connFD,readBuffer,sizeof(readBuffer));
+            return 0;
+        }
+    }
+    strcpy(newCourse.name,readBuffer);
+
+
+    // course department 
+    writeBytes = write(connFD, ADD_COURSE_DEPARTMENT,strlen(ADD_COURSE_DEPARTMENT));
+    if (writeBytes == -1)
+    {
+        perror("Error writing ADD_COURSE_DEPARTMENT message to client!");
+        return 0;
+    }
+
+    bzero(readBuffer, sizeof(readBuffer));
+    readBytes = read(connFD, &readBuffer, sizeof(readBuffer));
+    if (readBytes == -1)
+    {
+        perror("Error reading course department  from client!");
+        return 0;
+    }
+
+    //validation for course department
+    for(int i = 0;readBuffer[i]!='\0';i++) {
+        if(!isalpha(readBuffer[i]) && !isspace(readBuffer[i])) {
+            write(connFD,"Invalid dept name ^",19);
+            readBytes= read(connFD,readBuffer,sizeof(readBuffer));
+            return 0;
+        }
+    }
+    strcpy(newCourse.department,readBuffer);
+
+    // no of seats
+    writeBytes = write(connFD, ADD_COURSE_SEATS,strlen(ADD_COURSE_SEATS));
+    if (writeBytes == -1)
+    {
+        perror("Error writing ADD_COURSE_SEATS message to client!");
+        return 0;
+    }
+
+    bzero(readBuffer, sizeof(readBuffer));
+    readBytes = read(connFD, &readBuffer, sizeof(readBuffer));
+    if (readBytes == -1)
+    {
+        perror("Error reading no of seats from client!");
+        return 0;
+    }
+    int seats = atoi(readBuffer);
+
+    // validation for no of seats
+    if(seats<=0){
+        write(connFD,"Invalid no of seats ^",21);
+        readBytes = read(connFD,readBuffer,sizeof(readBuffer));
+        return 0;
+    }
+    newCourse.no_of_seats= seats;
+
+
+    // credits
+    writeBytes = write(connFD, ADD_COURSE_CREDITS,strlen(ADD_COURSE_CREDITS));
+    if (writeBytes == -1)
+    {
+        perror("Error writing ADD_COURSE_CREDITS message to client!");
+        return 0;
+    }
+
+    bzero(readBuffer, sizeof(readBuffer));
+    readBytes = read(connFD, &readBuffer, sizeof(readBuffer));
+    if (readBytes == -1)
+    {
+        perror("Error reading credits from client!");
+        return 0;
+    }
+    int credits = atoi(readBuffer);
+
+    // validation for credits
+    if(credits<=0){
+        write(connFD,"Invalid credits ^",17);
+        readBytes = read(connFD,readBuffer,sizeof(readBuffer));
+        return 0;
+    }
+    newCourse.credits= credits;
+     
+    
+    // no of available seats
+    newCourse.no_of_available_seats=seats;
+
+    //coursecode
+    char y[4];
+    strcpy(newCourse.courseid,"C-");
+    sprintf(y ,"%d",newCourse.id);
+    strcat(newCourse.courseid, y);
+
+    //course faculty name
+    strcpy(newCourse.facultyloginid,loggedInCustomer2.login);
+
+    //course status
+    strcpy(newCourse.status,"active");
+    
+    // creating course record in file
+    courseFileDescriptor = open(COURSE_FILE, O_CREAT|O_APPEND|O_WRONLY,S_IRWXU);
+    if (courseFileDescriptor == -1)
+    {
+        perror("Error while creating / opening course file!");
+        return 0;
+    }
+
+    writeBytes = write(courseFileDescriptor, &newCourse, sizeof(struct Course));
+    if (writeBytes == -1)
+    {
+        perror("Error while writing Course record to file!");
+        return 0;
+    }
+
+    close(courseFileDescriptor);
+    bzero(writeBuffer, sizeof(writeBuffer));
+    
+    //success message
+    sprintf(writeBuffer, "%s%s%d", ADD_COURSE_SUCCESS, newCourse.courseid,newCourse.id);
+    writeBytes = write(connFD, writeBuffer, sizeof(writeBuffer));
+    
+    readBytes = read(connFD,readBuffer,sizeof(readBuffer)); //dummy read
+    return 1;
 }
 
 bool lock_critical_section1(struct sembuf *semOp)
