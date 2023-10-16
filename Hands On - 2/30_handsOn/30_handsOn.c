@@ -1,68 +1,76 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+/*
+============================================================================
+Name : 30.c
+Author : Vraj Jatin Naik
+Description : Write a program to create a shared memory.
+              a. write some data to the shared memory
+              b. attach with O_RDONLY and check whether you are able to overwrite.
+              c. detach the shared memory
+              d. remove the shared memory
+Date : 4th Oct, 2023.
+============================================================================
+*/
+#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <sys/types.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 
-int main() {
-    key_t key;
-    int shmid;
-    char *shm_ptr;
+void main() {
+    key_t shmKey;
+    int shmIdentifier;
+    ssize_t shmSize = 30;
+    char *shmPointer, *rdOnlyShmPointer;
 
-    // Generate a unique key for the shared memory segment
-    key = ftok("/tmp", 'A');
-    if (key == -1) {
-        perror("ftok");
-        exit(1);
+    shmKey = ftok(".", 1);
+
+    if (shmKey == -1) {
+        perror("Error while computing key!");
+        _exit(0);
     }
 
-    // Create a shared memory segment with read and write permissions
-    shmid = shmget(key, 1024, 0666 | IPC_CREAT);
-    if (shmid == -1) {
-        perror("shmget");
-        exit(1);
+    shmIdentifier = shmget(shmKey, shmSize, IPC_CREAT | 0700);
+
+    if (shmIdentifier == -1) {
+        perror("Error while getting Shared Memory!");
+        _exit(0);
     }
 
-    printf("Shared memory segment created successfully.\n");
+    shmPointer = shmat(shmIdentifier, (void *)0, 0);
 
-    // Attach the shared memory segment for writing
-    shm_ptr = (char *)shmat(shmid, NULL, 0);
-    if (shm_ptr == (char *)(-1)) {
-        perror("shmat");
-        exit(1);
+    if (shmPointer == (void *)-1) {
+        perror("Error while attaching address space!");
+        _exit(0);
     }
 
-    // Write data to the shared memory
-    strcpy(shm_ptr, "Hello, Shared Memory!");
+    printf("Enter data to write to the shared memory: ");
+    fgets(shmPointer, shmSize, stdin);
 
-    printf("Data written to shared memory successfully.\n");
+    printf("Data written to shared memory: %s\n", shmPointer);
 
-    // Attach the shared memory segment with O_RDONLY
-    char *shm_readonly = (char *)shmat(shmid, NULL, SHM_RDONLY);
-    if (shm_readonly == (char *)(-1)) {
-        perror("shmat O_RDONLY");
-        exit(1);
+    rdOnlyShmPointer = shmat(shmIdentifier, (void *)0, SHM_RDONLY);
+    if (rdOnlyShmPointer == (void *)-1) {
+        perror("Error while attaching read-only address space!");
+        _exit(0);
     }
 
-    printf("Attached shared memory with O_RDONLY successfully.\n");
+    printf("Trying to overwrite read-only shared memory...\n");
 
-    // Attempt to overwrite data in the read-only attachment
-    // This should result in a segmentation fault
-    // strcpy(shm_readonly, "This should not work!"); // Uncomment this line to trigger segmentation fault
+    // The following line will not result in a segmentation fault
+    // as it's writing to regular (read-write) shared memory
+    strncpy(shmPointer, "Overwritten", shmSize);
 
-    // Detach the shared memory segments
-    shmdt(shm_ptr);
-    shmdt(shm_readonly);
+    printf("Data in read-only shared memory: %s\n", rdOnlyShmPointer);
 
-    printf("Shared memory detached successfully.\n");
+    printf("Detaching pointers from shared memory!\n");
+    shmdt(shmPointer);
+    shmdt(rdOnlyShmPointer);
 
-    // Remove the shared memory segment
-    shmctl(shmid, IPC_RMID, NULL);
+    printf("Press enter to delete the shared memory!\n");
+    getchar();
 
-    printf("Shared memory segment removed successfully.\n");
-
-    return 0;
+    // Delete Shared Memory
+    shmctl(shmIdentifier, IPC_RMID, NULL);
 }
 
