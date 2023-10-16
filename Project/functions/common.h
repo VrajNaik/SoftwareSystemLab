@@ -13,6 +13,7 @@
 
 #include "../record-struct/Student.h"
 #include "../record-struct/Faculty.h"
+#include "../record-struct/Enrollment.h"
 
 #include "./admin-credentials.h"
 #include "./server-constants.h"

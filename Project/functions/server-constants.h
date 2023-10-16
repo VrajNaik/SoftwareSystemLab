@@ -86,7 +86,7 @@
 #define CUSTOMER_LOGOUT "Logging you out now dear Student! Good bye!$"
 
 // STUDENT MENU
-#define CUSTOMER_MENU "1. Enroll to new Course\n2. Unenroll from Course\n3. View Enrolled Courses\n4. Change Password\nPress any other key to logout"
+#define CUSTOMER_MENU "......Welcome to Student Menu......\n\t1.View All Courses\n\t2.Enroll new course\n\t3.Drop course\n\t4.View enrolled course details\n\t5.Change password\n\t6.Logout and Exit\n\nChoose option:"
 
 // ====================================================
 
@@ -105,6 +105,7 @@
 #define STUDENT_FILE "./records/student.data"
 #define FACULTY_FILE "./records/faculty.data"
 #define COURSE_FILE "./records/course.data"
+#define ENROLL_FILE "./records/enrollment.data"
 
 #define ADMIN_MOD_STUDENT_ID "Enter student-id to modify:"
 #define ADMIN_MOD_STUDENT_MENU "Which information would you like to modify?\n1.Name \n 2.Age \n 3.Gander \n 4.Email \nPress any other key to cancel"
@@ -150,4 +151,15 @@
 #define ADD_COURSE_SEATS "Enter no of seats:"
 #define ADD_COURSE_CREDITS "Credits:"
 #define ADD_COURSE_SUCCESS "^ Course created successfully!\n The courseid is "
+
+// UNENROLL
+
+#define ADD_UNENROLL_SUCCESS "Unenrolled succesfully ^"
+
+// ENROLL
+
+#define ADD_ENROLL_SUCCESS "Enrolled successfully ^"
+
+// LOG_OUT
+#define LOG_OUT "You have been logged out ^"
 #endif
