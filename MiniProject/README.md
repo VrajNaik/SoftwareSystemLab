@@ -32,6 +32,9 @@ The Academia Portal project aims to create a user-friendly and multifunctional s
 - **Password Change**: Update their password.
 - **Exit**: Close the Faculty session.
 
+<b>*</b> &nbsp; <b><i>Operational Workflow:</i></b><br>
+<img src="./images/Work-Flow Diagram.png" width="" height=""><br/>
+
 ### Security and Authentication
 
 - The application will have a password-protected administrative login system.
