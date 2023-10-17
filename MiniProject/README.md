@@ -62,10 +62,14 @@ The Academia Portal project aims to create a user-friendly and multifunctional s
 - Faculty Login ID Format: `F-{fac-Id.}`
 - Auto Generated Password: `mtech`
 
-### Project Author
-
-- Vraj Jatin Naik
-- MTech CSE [MT2023150]
-- International Institute of Information Technology, Bangalore.
-
+### Goal
 The Academia Portal project aims to simplify course registration and academic management for students, faculty, and administrators. The user-friendly interface and secure authentication ensure that only authorized users can access the system. The use of system calls and concurrency control mechanisms makes it a robust and efficient solution for academic institutions.
+
+
+***
+
+<br> 
+<i>Report by, </i> <br/>
+Vraj Jatin Naik <br/>
+MTech CSE [MT2023050] <br/>
+International Institute of Information Technology, Bangalore. <br/>
