@@ -1,56 +1,71 @@
-# CS 513 Software Systems Mini Project 
+# Mini Project
 
-## Title: Design and Development of Course Registration Portal. EdConnect
+## Project Title: Design and Development of Course Registration Portal (Academia) - EdCourse
 
+### Project Description
 
-### Description
+The Academia Portal project aims to create a user-friendly and multifunctional system for managing student and faculty details as well as course information. The system will include features such as a login system for account holders, with user accounts managed by an Administrator. The roles to be implemented in this system are Faculty, Student, and Admin.
 
-The project aims to develop a Academia Portal that is user-friendly and multifunctional.
+### Key Functionalities
 
-1. All Student and Faculty details and Course information are stored in files..
-2. Account holders have to pass through a login system to enter their accounts, and all these User accounts will be managed by the Administrator.
-3. Roles to implement: Faculty, Student, Admin.
-4. The application should possess password-protected administrative access, thus preventing the whole management system from unauthorized access
-5. Once the Admin connects to the server, He/She should get a login and password prompt.
-6. After successful login, you should get menu for example:
-   
-    Do you want to:
+#### Admin Module
 
-    - Add Student
-    - Add Faculty
-    - Activate/Deactivate Student 
-    - Update Student/Faculty details
-    - Exit
-      
-7. Once the Student connects to the server, He/She should get a login and password prompt.
-8. After successful login, He/She should get menu for example:
+- **Add Student**: The Admin can add new student details to the system.
+- **Add Faculty**: The Admin can add new faculty details.
+- **Activate/Deactivate Student**: Admin can control student account status.
+- **Update Student/Faculty Details**: Modify student or faculty information.
+- **Exit**: Close the Admin session.
 
-    Do you want to:
+#### Student Module
 
-     - Enroll to new Courses
-     - Unenroll from already enrolled Courses
-     - View enrolled Courses
-     - Password Change
-     - Exit
-      
-9. Once the Faculty connects to the server, He/She should get a login and password prompt.
-10. After successful login, He/She should get menu for example:
+- **Enroll to New Courses**: Students can enroll in available courses.
+- **Unenroll from Already Enrolled Courses**: Withdraw from courses.
+- **View Enrolled Courses**: See a list of courses in which they are enrolled.
+- **Password Change**: Update their password.
+- **Exit**: Close the Student session.
 
-   Do you want to:
-   
-   - Add new Course
-   - Remove offered Course
-   - View enrollments in Courses
-   - Password Change
-   - Exit
-     
-11. If you want to view the Course details then read lock is to be set else if you want to Enroll or Unenroll then write lock should be used to protect the critical data section.
-12. Use socket programming – Server maintains the database and serves multiple clients concurrently. Clients can connect to the server and access their specific academic details.
-13. Use System calls instead of Library functions wherever it is possible in the project: Process Management, File Management, File Locking, Semaphores, Multithreading and Inter Process   Communication Mechanisms.
+#### Faculty Module
 
-***
-<br> 
-<i>Report by, </i> <br/>
-Vraj Naik <br/>
-MTech CSE [MT2023050] <br/>
-International Institute of Information Technology, Bangalore. <br/>
+- **Add New Course**: Faculty members can add new courses.
+- **Remove Offered Course**: Remove courses they are offering.
+- **View Enrollments in Courses**: See a list of students enrolled in their courses.
+- **Password Change**: Update their password.
+- **Exit**: Close the Faculty session.
+
+### Security and Authentication
+
+- The application will have a password-protected administrative login system.
+- Administrators, students, and faculty will have separate login systems.
+- User accounts are managed by the Administrator, ensuring authorized access.
+- When users connect to the server, they are prompted for their login credentials.
+
+### Concurrency and Data Protection
+
+- To view course details, read locks are used.
+- To enroll or unenroll from courses, write locks protect the critical data section.
+
+### Technical Implementation
+
+- The project will utilize socket programming.
+- The server will maintain the database and serve multiple clients concurrently.
+- System calls will be used instead of library functions where possible for Process Management, File Management, File Locking, Semaphores, Multithreading, and Inter Process Communication Mechanisms.
+
+### Execution
+- First compile server program, execute the command `gcc server.c -o server.out -lcrypt`
+- To run the server program, execute the command `./server.out` in the background.
+- Now compile client program, execute the command `gcc client.c -o client.out`
+- To run the client program, use the command `./client.out`.
+- Default Admin credentials:
+  - Login ID: `admin`
+  - Password: `vraj`
+- Student Login ID Format: `S-{stu-Id.}`
+- Faculty Login ID Format: `F-{fac-Id.}`
+- Auto Generated Password: `mtech`
+
+### Project Author
+
+- Vraj Jatin Naik
+- MTech CSE [MT2023150]
+- International Institute of Information Technology, Bangalore.
+
+The Academia Portal project aims to simplify course registration and academic management for students, faculty, and administrators. The user-friendly interface and secure authentication ensure that only authorized users can access the system. The use of system calls and concurrency control mechanisms makes it a robust and efficient solution for academic institutions.
