@@ -33,7 +33,7 @@ The Academia Portal project aims to create a user-friendly and multifunctional s
 - **Exit**: Close the Faculty session.
 
 <b>*</b> &nbsp; <b><i>Operational Workflow:</i></b><br>
-<img src="./images/Work-Flow Diagram.png" width="" height=""><br/>
+<img src="./images/Work-Flow Diagram.png" width="100" height="200"><br/>
 
 ### Security and Authentication
 
