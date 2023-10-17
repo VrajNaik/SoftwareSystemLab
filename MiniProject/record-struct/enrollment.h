@@ -6,7 +6,7 @@ struct Enrollment
     int id; // 0, 1, 2 ....
     char courseid[6];
     char studentid[6];
-    char status[12];
+    bool status;
     time_t enroll_time;    
 };
 
