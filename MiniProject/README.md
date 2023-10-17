@@ -1,6 +1,7 @@
-# Mini-project
+# CS 513 Software Systems Mini Project 
 
-## Title: Design and Development of Course Registration Portal.
+## Title: Design and Development of Course Registration Portal. EdConnect
+
 
 ### Description
 
@@ -46,3 +47,10 @@ The project aims to develop a Academia Portal that is user-friendly and multifun
 11. If you want to view the Course details then read lock is to be set else if you want to Enroll or Unenroll then write lock should be used to protect the critical data section.
 12. Use socket programming – Server maintains the database and serves multiple clients concurrently. Clients can connect to the server and access their specific academic details.
 13. Use System calls instead of Library functions wherever it is possible in the project: Process Management, File Management, File Locking, Semaphores, Multithreading and Inter Process   Communication Mechanisms.
+
+***
+<br> 
+<i>Report by, </i> <br/>
+Vraj Naik <br/>
+MTech CSE [MT2023050] <br/>
+International Institute of Information Technology, Bangalore. <br/>
