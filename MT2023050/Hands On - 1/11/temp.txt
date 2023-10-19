@@ -1,4 +1,0 @@
-This is some data written using fd1.
-This is some data written using fd2. Which is created using dup.
-This is some data written using fd3. Which is created using dup2
-This is some data written using fd4. Which is created using fcntl.

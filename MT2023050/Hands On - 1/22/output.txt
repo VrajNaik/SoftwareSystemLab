@@ -1,2 +1,0 @@
-Parent process writing to the file.
-Child process writing to the file.
