@@ -1,71 +1,56 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <errno.h>
+/*
+============================================================================
+Name : 27.c
+Author : Vraj Jatin Naik
+Description : Write a program to receive messages from the message queue.
+              a. with 0 as a flag
+              b. with IPC_NOWAIT as a flag
+Date : 4th Oct, 2023.
+============================================================================
+*/
+#include <sys/types.h> 
+#include <sys/ipc.h>  
+#include <sys/msg.h>  
+#include <stdio.h>     
+#include <unistd.h>   
 
-struct msgbuf {
-    long mtype;  // Message type
-    char mtext[256];  // Message data
-};
+void main()
+{
+    key_t queueKey;     
+    int queueIdentifier; 
+    ssize_t messageSize; 
 
-int main() {
-    key_t key;
-    int msgqid;
-    struct msgbuf message;
-    int option;
+    struct msgbuf
+    {
+        long mtype;     
+        int  someNumber; // Integer data
+    } data;
 
-    // Generate the same key as when creating the message queue
-    if ((key = ftok(".", 'A')) == -1) {
-        perror("ftok");
-        exit(EXIT_FAILURE);
+    queueKey = ftok(".", 1);
+
+    if (queueKey == -1)
+    {
+        perror("Error while computing key!");
+        _exit(0);
     }
 
-    // Get the message queue ID
-    if ((msgqid = msgget(key, 0666)) == -1) {
-        perror("msgget");
-        exit(EXIT_FAILURE);
+    queueIdentifier = msgget(queueKey, IPC_CREAT | 0700);
+
+    if (queueIdentifier == -1)
+    {
+        perror("Error while creating message queue!");
+        _exit(0);
     }
 
-    while (1) {
-        // Display the menu
-        printf("Menu:\n");
-        printf("1. Receive with blocking (0 as flag)\n");
-        printf("2. Receive with non-blocking (IPC_NOWAIT as flag)\n");
-        printf("3. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &option);
+    data.mtype = 1;
 
-        if (option == 1) {
-            // Receive a message with 0 as a flag (blocking)
-            if (msgrcv(msgqid, &message, sizeof(message.mtext), 1, 0) == -1) {
-                perror("msgrcv");
-                exit(EXIT_FAILURE);
-            }
-            printf("Received message with 0 as a flag: %s\n", message.mtext);
-        } else if (option == 2) {
-            // Receive a message with IPC_NOWAIT as a flag (non-blocking)
-            if (msgrcv(msgqid, &message, sizeof(message.mtext), 1, IPC_NOWAIT) == -1) {
-                if (errno == ENOMSG) {
-                    printf("No message available (IPC_NOWAIT flag).\n");
-                } else {
-                    perror("msgrcv");
-                    exit(EXIT_FAILURE);
-                }
-            } else {
-                printf("Received message with IPC_NOWAIT as a flag: %s\n", message.mtext);
-            }
-        } else if (option == 3) {
-            // Exit the program
-            printf("Exiting the program.\n");
-            break;
-        } else {
-            printf("Invalid option. Please enter a valid choice.\n");
-        }
+    messageSize = msgrcv(queueIdentifier, &data, sizeof(data), data.mtype, IPC_NOWAIT);
+
+    if(messageSize == -1) {
+        perror("Error while sending getting via Message Queue!");
+        _exit(0);
     }
 
-    return 0;
+    printf("Received number: %d\n", data.someNumber);
 }
 

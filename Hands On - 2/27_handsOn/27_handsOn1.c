@@ -1,53 +1,58 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
+/*
+============================================================================
+Name : 27.c
+Author : Vraj Jatin Naik
+Description : Write a program to receive messages from the message queue.
+              a. with 0 as a flag
+              b. with IPC_NOWAIT as a flag
+Date : 4th Oct, 2023.
+============================================================================
+*/
+#include <sys/types.h> 
+#include <sys/ipc.h>   
+#include <sys/msg.h>  
+#include <stdio.h>    
+#include <unistd.h>    
 
-struct msgbuf {
-    long mtype;  // Message type
-    char mtext[256];  // Message data
-};
+void main()
+{
+    key_t queueKey;     
+    int queueIdentifier;
+    ssize_t messageSize; 
 
-int main() {
-    key_t key;
-    int msgqid;
-    struct msgbuf message;
+    struct msgbuf
+    {
+        long mtype;    
+        int someNumber; 
+    } data;
 
-    // Generate the same key as when creating the message queue
-    if ((key = ftok(".", 'A')) == -1) {
-        perror("ftok");
-        exit(EXIT_FAILURE);
+    queueKey = ftok(".", 1);
+
+    if (queueKey == -1)
+    {
+        perror("Error while computing key!");
+        _exit(0);
     }
 
-    // Get the message queue ID
-    if ((msgqid = msgget(key, 0666)) == -1) {
-        perror("msgget");
-        exit(EXIT_FAILURE);
+    queueIdentifier = msgget(queueKey, IPC_CREAT | 0700);
+
+    if (queueIdentifier == -1)
+    {
+        perror("Error while creating message queue!");
+        _exit(0);
     }
 
-    // Ask the user for a message
-    printf("Enter a message to send to the queue: ");
-    fgets(message.mtext, sizeof(message.mtext), stdin);
+    data.mtype = 1;
+    data.someNumber = 1;
 
-    // Remove the trailing newline character if present
-    size_t length = strlen(message.mtext);
-    if (length > 0 && message.mtext[length - 1] == '\n') {
-        message.mtext[length - 1] = '\0';
+    messageSize = msgrcv(queueIdentifier, &data, sizeof(data), data.mtype, 0);
+
+    if (messageSize == -1)
+    {
+        perror("Error while sending getting via Message Queue!");
+        _exit(0);
     }
 
-    // Set the message type (can be any positive integer)
-    message.mtype = 1;
-
-    // Send the message to the queue
-    if (msgsnd(msgqid, &message, sizeof(message.mtext), 0) == -1) {
-        perror("msgsnd");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("Message sent to the queue: %s\n", message.mtext);
-
-    return 0;
+    printf("Received number: %d\n", data.someNumber);
 }
 
